@@ -1,13 +1,8 @@
 import {ConfigFile} from '../../generator/types';
-
-// Simulation candidate: 60% eMode LTV requires risk approval before production execution.
-// The Solidity payload additionally scans every eMode at execution time to remove USDG
-// borrowing, covering categories created after this snapshot. Preserve that custom hook
-// when regenerating; the legacy listing generator also needs its obsolete V3 fields removed.
 export const config: ConfigFile = {
   rootOptions: {
     configFile: 'src/20260909_AaveV3InkWhitelabel_ListKHYPE/config.ts',
-    force: false,
+    force: true,
     pools: ['AaveV3InkWhitelabel'],
     title: 'list kHYPE',
     shortName: 'ListKHYPE',

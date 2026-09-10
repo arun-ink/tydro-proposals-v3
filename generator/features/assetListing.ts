@@ -66,8 +66,6 @@ function generateAssetListingSol(cfg: Listing) {
   assetSymbol: "${cfg.assetSymbol}",
   priceFeed: ${cfg.assetSymbol}_PRICE_FEED,
   enabledToBorrow: ${translateJsBoolToSol(cfg.enabledToBorrow)},
-  borrowableInIsolation: ${translateJsBoolToSol(cfg.borrowableInIsolation)},
-  withSiloedBorrowing: ${translateJsBoolToSol(cfg.withSiloedBorrowing)},
   flashloanable: ${translateJsBoolToSol(cfg.flashloanable)},
   ltv: ${translateJsPercentToSol(cfg.ltv)},
   liqThreshold: ${translateJsPercentToSol(cfg.liqThreshold)},
@@ -75,7 +73,6 @@ function generateAssetListingSol(cfg: Listing) {
   reserveFactor: ${translateJsPercentToSol(cfg.reserveFactor)},
   supplyCap: ${translateJsNumberToSol(cfg.supplyCap)},
   borrowCap: ${translateJsNumberToSol(cfg.borrowCap)},
-  debtCeiling: ${translateJsNumberToSol(cfg.debtCeiling)},
   liqProtocolFee: ${translateJsPercentToSol(cfg.liqProtocolFee)},
   rateStrategyParams: IAaveV3ConfigEngine.InterestRateInputData({
      optimalUsageRatio: ${translateJsPercentToSol(cfg.rateStrategyParams.optimalUtilizationRate)},
@@ -175,7 +172,6 @@ export const assetListing: FeatureModule<Listing[]> = {
           let listingTemplate = `The table below illustrates the configured risk parameters for **${cfg.assetSymbol}**\n\n`;
           listingTemplate += `| Parameter | Value |\n`;
           listingTemplate += `| --- | --: |\n`;
-          listingTemplate += `| Isolation Mode | ${cfg.debtCeiling !== '0'} |\n`;
           listingTemplate += `| Borrowable | ${cfg.enabledToBorrow} |\n`;
           listingTemplate += `| Collateral Enabled | ${!!cfg.liqThreshold} |\n`;
           listingTemplate += `| Supply Cap (${cfg.assetSymbol}) | ${transformNumberToHumanReadable(
@@ -183,9 +179,6 @@ export const assetListing: FeatureModule<Listing[]> = {
           )} |\n`;
           listingTemplate += `| Borrow Cap (${cfg.assetSymbol}) | ${transformNumberToHumanReadable(
             cfg.borrowCap,
-          )} |\n`;
-          listingTemplate += `| Debt Ceiling | USD ${transformNumberToHumanReadable(
-            cfg.debtCeiling,
           )} |\n`;
           listingTemplate += `| LTV | ${transformNumberToPercent(cfg.ltv)} |\n`;
           listingTemplate += `| LT | ${transformNumberToPercent(cfg.liqThreshold)} |\n`;
@@ -209,8 +202,6 @@ export const assetListing: FeatureModule<Listing[]> = {
             cfg.rateStrategyParams.optimalUtilizationRate,
           )} |\n`;
           listingTemplate += `| Flashloanable	| ${cfg.flashloanable} |\n`;
-          listingTemplate += `| Siloed Borrowing	| ${cfg.withSiloedBorrowing} |\n`;
-          listingTemplate += `| Borrowable in Isolation | ${cfg.borrowableInIsolation} |\n`;
           listingTemplate += `| Oracle | ${cfg.priceFeed} |\n`;
           if (isAddress(cfg.admin)) {
             listingTemplate += `\nAdditionally [${cfg.admin}](${getExplorerLink(CHAIN_TO_CHAIN_ID[getPoolChain(pool)], cfg.admin)}) has been set as the emission admin for ${cfg.assetSymbol} and the corresponding aToken.\n`;

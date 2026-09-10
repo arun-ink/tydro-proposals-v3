@@ -38,25 +38,22 @@ describe('feature: assetListing', () => {
     expect(files).toMatchSnapshot();
   });
 
-  it('regression: isolation mode should be flase when ceiling is zero', async () => {
-    const zeroCeilingListing = [{...assetListingConfig[0], debtCeiling: '0'}];
-    const poolConfigs: PoolConfigs = {
-      [MOCK_OPTIONS.pools[0]]: {
-        pool: MOCK_OPTIONS.pools[0],
-        artifacts: [
-          assetListing.build({
-            options: MOCK_OPTIONS,
-            pool: 'AaveV3Ethereum',
-            cfg: zeroCeilingListing,
-            cache: {blockNumber: 42},
-            configs: {[FEATURE.ASSET_LISTING]: zeroCeilingListing},
-          }),
-        ],
-        configs: {[FEATURE.ASSET_LISTING]: [{...assetListingConfig[0], debtCeiling: 0}]},
-        cache: {blockNumber: 42},
-      },
-    };
-    const files = await generateFiles(MOCK_OPTIONS, poolConfigs);
-    expect(files).toMatchSnapshot();
+  it('regression: V3.7 listings do not require or emit deprecated fields', () => {
+    const output = assetListing.build({
+      options: MOCK_OPTIONS,
+      pool: 'AaveV3Ethereum',
+      cfg: assetListingConfig,
+      cache: {blockNumber: 42},
+      configs: {[FEATURE.ASSET_LISTING]: assetListingConfig},
+    });
+    const code = output.code?.fn?.join('\n');
+    const specification = output.aip?.specification?.join('\n');
+
+    expect(code).toContain('IAaveV3ConfigEngine.Listing');
+    expect(code).not.toMatch(/\b(borrowableInIsolation|withSiloedBorrowing|debtCeiling)\s*:/);
+    expect(specification).toContain('| Borrowable | ENABLED |');
+    expect(specification).not.toMatch(
+      /\| (Isolation Mode|Debt Ceiling|Siloed Borrowing|Borrowable in Isolation)\b/,
+    );
   });
 });

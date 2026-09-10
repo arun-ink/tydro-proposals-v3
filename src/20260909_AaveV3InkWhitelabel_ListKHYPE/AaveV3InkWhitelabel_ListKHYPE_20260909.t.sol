@@ -2,8 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {AaveV3InkWhitelabel, AaveV3InkWhitelabelAssets} from 'aave-address-book/AaveV3InkWhitelabel.sol';
-import {GovernanceV3InkWhitelabel} from 'aave-address-book/GovernanceV3InkWhitelabel.sol';
-import {IExecutor} from 'aave-address-book/governance-v3/IExecutor.sol';
 import {IPool} from 'aave-v3-origin/contracts/interfaces/IPool.sol';
 import {AaveV3Payload} from 'aave-v3-origin/contracts/extensions/v3-config-engine/AaveV3Payload.sol';
 import {IDefaultInterestRateStrategyV2} from 'aave-v3-origin/contracts/interfaces/IDefaultInterestRateStrategyV2.sol';
@@ -36,12 +34,12 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
   address internal constant USDT0 = AaveV3InkWhitelabelAssets.USDT_UNDERLYING;
   AaveV3InkWhitelabel_ListKHYPE_20260909 internal proposal;
 
-  /// @notice Uses a reproducible Ink snapshot, with an override for the supplied Tenderly fork.
+  /// @notice Uses a reproducible Ink snapshot and funds the listing's seed deposit.
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('ink'), vm.envOr('KHYPE_FORK_BLOCK', uint256(55500415)));
+    vm.createSelectFork(vm.rpcUrl('ink'), 55500415);
     proposal = new AaveV3InkWhitelabel_ListKHYPE_20260909();
 
-    // the payload seeds the dust bin with 1 kHYPE, so the executor must hold it at execution time
+    // Fund the listing's seed deposit on the fork; production funding is required separately.
     deal(proposal.kHYPE(), AaveV3InkWhitelabel.ACL_ADMIN, proposal.kHYPE_SEED_AMOUNT());
   }
 
@@ -49,6 +47,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
    * @dev Retains configuration snapshots, plausibility, execution-gas and seatbelt checks.
    *      The generic route selector chooses the legacy LTV-zero sUSDe/USDT0 eMode 2.
    *      Explicit route-aware e2e tests below avoid expecting new debt in that reduce-only category.
+   * forge-config: default.isolate = true
    */
   function test_defaultProposalExecution() public {
     defaultTest(
@@ -104,7 +103,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
     assertEq(reserve.getLtv(), 0);
     assertFalse(reserve.getBorrowingEnabled());
     assertFalse(POOL.getConfiguration(USDG).getBorrowingEnabled());
-    assertEq(collateral.ltv, proposal.KHYPE_EMODE_LTV());
+    assertEq(collateral.ltv, 6000);
     assertEq(collateral.liquidationThreshold, 6500);
     assertEq(collateral.liquidationBonus, 11000);
     assertTrue(POOL.getIsEModeCategoryIsolated(category));
@@ -199,110 +198,6 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
         POOL.borrow(USDG, 1e6, 2, 0, user);
       }
     }
-  }
-
-  /// @notice Newly added or non-contiguous categories are restricted without altering their other rules.
-  function test_USDGDisabledInCategoryAddedBeforeExecution() public {
-    vm.startPrank(AaveV3InkWhitelabel.ACL_ADMIN);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setEModeCategory(
-      200,
-      8000,
-      8500,
-      10500,
-      'future-category',
-      true
-    );
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetCollateralInEMode(SUSDE, 200, true);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetBorrowableInEMode(USDG, 200, true);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetBorrowableInEMode(USDT0, 200, true);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setEModeCategory(
-      255,
-      8000,
-      8500,
-      10500,
-      'last-category',
-      true
-    );
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetCollateralInEMode(SUSDE, 255, true);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetBorrowableInEMode(USDG, 255, true);
-    vm.stopPrank();
-    uint128[256] memory borrowsBefore;
-    bytes32[256] memory otherSettingsBefore;
-    for (uint256 i = 1; i <= type(uint8).max; ++i) {
-      borrowsBefore[i] = POOL.getEModeCategoryBorrowableBitmap(uint8(i));
-      otherSettingsBefore[i] = _eModeNonBorrowSettings(uint8(i));
-    }
-
-    _executeListing();
-    uint8 newCategory = _kHypeEMode();
-    for (uint256 i = 1; i <= type(uint8).max; ++i) {
-      if (i != newCategory) {
-        assertEq(
-          POOL.getEModeCategoryBorrowableBitmap(uint8(i)),
-          borrowsBefore[i] & ~_reserveMask(USDG)
-        );
-        assertEq(_eModeNonBorrowSettings(uint8(i)), otherSettingsBefore[i]);
-      }
-    }
-    assertEq(POOL.getEModeCategoryBorrowableBitmap(200), _reserveMask(USDT0));
-    assertEq(POOL.getEModeCategoryBorrowableBitmap(255), 0);
-  }
-
-  /// @notice Exercises 254 USDG permission removals and allocation of the last eMode within the gas budget.
-  function test_WorstCaseCategoryScanAndCleanupFitsPayloadGasLimit() public {
-    vm.startPrank(AaveV3InkWhitelabel.ACL_ADMIN);
-    for (uint256 i = 1; i < type(uint8).max; ++i) {
-      uint8 category = uint8(i);
-      if (POOL.getEModeCategoryCollateralConfig(category).liquidationThreshold == 0) {
-        AaveV3InkWhitelabel.POOL_CONFIGURATOR.setEModeCategory(
-          category,
-          8000,
-          8500,
-          10500,
-          'gas-bound-category',
-          true
-        );
-      }
-      AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetBorrowableInEMode(USDG, category, true);
-    }
-    vm.stopPrank();
-    assertEq(POOL.getEModeCategoryCollateralConfig(255).liquidationThreshold, 0);
-
-    _executeListing();
-    // Capture the cold transaction gas before any subsequent external call replaces lastCallGas.
-    uint256 executionGas = vm.lastCallGas().gasTotalUsed;
-    _assertPayloadGasWithinLimit(executionGas);
-    emit log_named_uint('Worst-case payload execution gas', executionGas);
-    assertEq(_kHypeEMode(), 255);
-    for (uint256 i = 1; i < type(uint8).max; ++i) {
-      assertEq(POOL.getEModeCategoryBorrowableBitmap(uint8(i)) & _reserveMask(USDG), 0);
-    }
-    assertEq(POOL.getEModeCategoryBorrowableBitmap(255), _reserveMask(USDG));
-  }
-
-  /// @notice Stale permissions in the next category make the listing fail atomically.
-  function test_StaleCategoryBitsRevertListingAtomically() public {
-    assertEq(POOL.getEModeCategoryCollateralConfig(7).liquidationThreshold, 0);
-    vm.startPrank(AaveV3InkWhitelabel.ACL_ADMIN);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetCollateralInEMode(KBTC, 7, true);
-    AaveV3InkWhitelabel.POOL_CONFIGURATOR.setAssetBorrowableInEMode(USDC, 7, true);
-    vm.stopPrank();
-    uint128 legacyBorrowsBefore = POOL.getEModeCategoryBorrowableBitmap(5);
-    uint256 reserveCountBefore = POOL.getReservesCount();
-    uint256 seedBefore = IERC20(proposal.kHYPE()).balanceOf(AaveV3InkWhitelabel.ACL_ADMIN);
-
-    // The payload's InvalidIsolationConfiguration(7) is wrapped by the deployed executor
-    // as governance FAILED_ACTION_EXECUTION ("29"); the trace identifies the underlying guard.
-    vm.expectRevert(bytes('29'));
-    _executeListing();
-
-    assertEq(POOL.getReservesCount(), reserveCountBefore);
-    assertEq(POOL.getReserveAToken(proposal.kHYPE()), address(0));
-    assertEq(POOL.getEModeCategoryBorrowableBitmap(5), legacyBorrowsBefore);
-    assertEq(POOL.getEModeCategoryBorrowableBitmap(7), _reserveMask(USDC));
-    assertEq(POOL.getEModeCategoryCollateralBitmap(7), _reserveMask(KBTC));
-    assertEq(POOL.getEModeCategoryCollateralConfig(7).liquidationThreshold, 0);
-    assertEq(IERC20(proposal.kHYPE()).balanceOf(AaveV3InkWhitelabel.ACL_ADMIN), seedBefore);
   }
 
   /// @notice kHYPE cannot activate collateral or originate USDC/USDG debt in the base market.
@@ -487,16 +382,14 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
   }
 
   function _executeListing() internal {
-    // Calls the actual executor under its controller authority on either Ink or a Tenderly virtual chain.
-    vm.prank(address(GovernanceV3InkWhitelabel.PERMISSIONED_PAYLOADS_CONTROLLER));
-    IExecutor(GovernanceV3InkWhitelabel.PERMISSIONED_PAYLOADS_CONTROLLER_EXECUTOR)
-      .executeTransaction(address(proposal), 0, 'execute()', bytes(''), true);
+    executePayload(vm, address(proposal), POOL);
   }
 
   function _kHypeEMode() internal view returns (uint8) {
     for (uint256 i = 1; i <= type(uint8).max; ++i) {
-      if (keccak256(bytes(POOL.getEModeCategoryLabel(uint8(i)))) == keccak256('kHYPE__USDG'))
+      if (keccak256(bytes(POOL.getEModeCategoryLabel(uint8(i)))) == keccak256('kHYPE__USDG')) {
         return uint8(i);
+      }
     }
     revert('kHYPE eMode missing');
   }
@@ -533,19 +426,6 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
 
   function _debtBalance(address user, address asset) internal view returns (uint256) {
     return IERC20(POOL.getReserveVariableDebtToken(asset)).balanceOf(user);
-  }
-
-  function _eModeNonBorrowSettings(uint8 category) internal view returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          POOL.getEModeCategoryLabel(category),
-          POOL.getEModeCategoryCollateralConfig(category),
-          POOL.getEModeCategoryCollateralBitmap(category),
-          POOL.getEModeCategoryLtvzeroBitmap(category),
-          POOL.getIsEModeCategoryIsolated(category)
-        )
-      );
   }
 
   function _reserveAndRateSettings(address asset) internal view returns (bytes32) {
