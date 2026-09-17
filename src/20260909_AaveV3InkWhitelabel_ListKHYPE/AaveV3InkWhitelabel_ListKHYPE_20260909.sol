@@ -36,7 +36,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
       enabledToBorrow: EngineFlags.DISABLED,
       flashloanable: EngineFlags.ENABLED,
       ltv: 0,
-      liqThreshold: 65_00,
+      liqThreshold: 0,
       liqBonus: 10_00,
       reserveFactor: 20_00,
       supplyCap: 122_000,
