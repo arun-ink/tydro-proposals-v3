@@ -39,7 +39,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
       liqThreshold: 0,
       liqBonus: 10_00,
       reserveFactor: 20_00,
-      supplyCap: 122_000,
+      supplyCap: 120_000,
       borrowCap: 1,
       liqProtocolFee: 10_00,
       rateStrategyParams: IAaveV3ConfigEngine.InterestRateInputData({
