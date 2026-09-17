@@ -53,6 +53,27 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
     return listings;
   }
 
+  function rateStrategiesUpdates()
+    public
+    pure
+    override
+    returns (IAaveV3ConfigEngine.RateStrategyUpdate[] memory)
+  {
+    IAaveV3ConfigEngine.RateStrategyUpdate[]
+      memory rateStrategies = new IAaveV3ConfigEngine.RateStrategyUpdate[](1);
+    rateStrategies[0] = IAaveV3ConfigEngine.RateStrategyUpdate({
+      asset: AaveV3InkWhitelabelAssets.USDG_UNDERLYING,
+      params: IAaveV3ConfigEngine.InterestRateInputData({
+        optimalUsageRatio: 90_00,
+        baseVariableBorrowRate: 6_00,
+        variableRateSlope1: 2_00,
+        variableRateSlope2: 40_00
+      })
+    });
+
+    return rateStrategies;
+  }
+
   function _supplyAndConfigureLMAdmin(address asset, uint256 seedAmount, address lmAdmin) internal {
     IERC20(asset).forceApprove(address(AaveV3InkWhitelabel.POOL), seedAmount);
     AaveV3InkWhitelabel.POOL.supply(asset, seedAmount, address(AaveV3InkWhitelabel.DUST_BIN), 0);
