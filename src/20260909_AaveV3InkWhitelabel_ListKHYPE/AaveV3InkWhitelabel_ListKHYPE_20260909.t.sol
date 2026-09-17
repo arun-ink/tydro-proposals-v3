@@ -103,8 +103,8 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909_Test is ProtocolV3TestBase {
     assertEq(reserve.getLtv(), 0);
     assertFalse(reserve.getBorrowingEnabled());
     assertFalse(POOL.getConfiguration(USDG).getBorrowingEnabled());
-    assertEq(collateral.ltv, 6000);
-    assertEq(collateral.liquidationThreshold, 6500);
+    assertEq(collateral.ltv, 6500);
+    assertEq(collateral.liquidationThreshold, 7200);
     assertEq(collateral.liquidationBonus, 11000);
     assertTrue(POOL.getIsEModeCategoryIsolated(category));
     assertEq(POOL.getEModeCategoryCollateralBitmap(category), _reserveMask(proposal.kHYPE()));
