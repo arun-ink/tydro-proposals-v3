@@ -18,10 +18,10 @@
 | oracleDecimals | 8 |
 | oracleDescription | HYPE / USD |
 | oracleLatestAnswer | 83.64962 $ |
-| usageAsCollateralEnabled | :white_check_mark: |
+| usageAsCollateralEnabled | :x: |
 | ltv | 0 % [0] |
-| liquidationThreshold | 65 % [6500] |
-| liquidationBonus | 10 % [11000] |
+| liquidationThreshold | 0 % [0] |
+| liquidationBonus | 0 % |
 | liquidationProtocolFee | 10 % [1000] |
 | reserveFactor | 20 % [2000] |
 | aToken | [0x49411839511dcB473e9eCd5471B7add47EA1082e](https://explorer.inkonchain.com/address/0x49411839511dcB473e9eCd5471B7add47EA1082e) |
@@ -91,8 +91,8 @@
 | index | event |
 | --- | --- |
 | 1 | Initialized(underlyingAsset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929, pool: 0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA, treasury: 0x9138E2cAdFEB23AFFdc0419F2912CaB8F135dba9, incentivesController: 0xD93e3Ae8f69D04d484d1652Ca569d4b0522414DF, aTokenDecimals: 18, aTokenName: Aave InkWhitelabel kHYPE, aTokenSymbol: aInkWlkHYPE, params: 0x) |
-| 24 | Transfer(from: 0x0000000000000000000000000000000000000000, to: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, value: 1,000,000,000,000,000,000 [1000000000000000000, 0 decimals]) |
-| 25 | Mint(caller: 0x1dF462e2712496373A347f8ad10802a5E95f053D, onBehalfOf: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, value: 1,000,000,000,000,000,000 [1000000000000000000, 0 decimals], balanceIncrease: 0, index: 1 [1000000000000000000000000000, 27 decimals]) |
+| 23 | Transfer(from: 0x0000000000000000000000000000000000000000, to: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, value: 1,000,000,000,000,000,000 [1000000000000000000, 0 decimals]) |
+| 24 | Mint(caller: 0x1dF462e2712496373A347f8ad10802a5E95f053D, onBehalfOf: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, value: 1,000,000,000,000,000,000 [1000000000000000000, 0 decimals], balanceIncrease: 0, index: 1 [1000000000000000000000000000, 27 decimals]) |
 
 #### 0x335c7Ea0b40b14E6dD31fb52532D2db70cf77878
 
@@ -117,42 +117,41 @@
 | 8 | ReserveBorrowing(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), enabled: false) |
 | 9 | ReserveFactorChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), oldReserveFactor: 0, newReserveFactor: 2000) |
 | 11 | ReserveFlashLoaning(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), enabled: true) |
-| 12 | CollateralConfigurationChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), ltv: 0, liquidationThreshold: 6500, liquidationBonus: 11000) |
-| 13 | LiquidationProtocolFeeChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), oldFee: 0, newFee: 1000) |
-| 14 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 2, borrowable: false) |
-| 15 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 3, borrowable: false) |
-| 16 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 5, borrowable: false) |
-| 17 | EModeCategoryAdded(categoryId: 7, ltv: 6500, liquidationThreshold: 7200, liquidationBonus: 11000, oracle: 0x0000000000000000000000000000000000000000, label: kHYPE__USDG) |
-| 18 | EModeCategoryIsolationChanged(categoryId: 7, isolated: true) |
-| 19 | AssetCollateralInEModeChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), categoryId: 7, collateral: true) |
-| 20 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 7, borrowable: true) |
+| 12 | LiquidationProtocolFeeChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), oldFee: 0, newFee: 1000) |
+| 13 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 2, borrowable: false) |
+| 14 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 3, borrowable: false) |
+| 15 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 5, borrowable: false) |
+| 16 | EModeCategoryAdded(categoryId: 7, ltv: 6500, liquidationThreshold: 7200, liquidationBonus: 11000, oracle: 0x0000000000000000000000000000000000000000, label: kHYPE__USDG) |
+| 17 | EModeCategoryIsolationChanged(categoryId: 7, isolated: true) |
+| 18 | AssetCollateralInEModeChanged(asset: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), categoryId: 7, collateral: true) |
+| 19 | AssetBorrowableInEModeChanged(asset: 0xe343167631d89B6Ffc58B88d6b7fB0228795491D (symbol: USDG), categoryId: 7, borrowable: true) |
 
 #### 0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA (AaveV3InkWhitelabel.POOL)
 
 | index | event |
 | --- | --- |
 | 10 | ReserveDataUpdated(reserve: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), liquidityRate: 0, stableBorrowRate: 0, variableBorrowRate: 0, liquidityIndex: 1 [1000000000000000000000000000, 27 decimals], variableBorrowIndex: 1 [1000000000000000000000000000, 27 decimals]) |
-| 22 | ReserveDataUpdated(reserve: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), liquidityRate: 0, stableBorrowRate: 0, variableBorrowRate: 0, liquidityIndex: 1 [1000000000000000000000000000, 27 decimals], variableBorrowIndex: 1 [1000000000000000000000000000, 27 decimals]) |
-| 26 | Supply(reserve: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), onBehalfOf: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, referralCode: 0, user: 0x1dF462e2712496373A347f8ad10802a5E95f053D, amount: 1 [1000000000000000000, 18 decimals]) |
+| 21 | ReserveDataUpdated(reserve: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), liquidityRate: 0, stableBorrowRate: 0, variableBorrowRate: 0, liquidityIndex: 1 [1000000000000000000000000000, 27 decimals], variableBorrowIndex: 1 [1000000000000000000000000000, 27 decimals]) |
+| 25 | Supply(reserve: 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929 (symbol: kHYPE), onBehalfOf: 0xb50881a9e7Ca0d1c08A59f4da1dE2f3D75B1E34E, referralCode: 0, user: 0x1dF462e2712496373A347f8ad10802a5E95f053D, amount: 1 [1000000000000000000, 18 decimals]) |
 
 #### 0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929
 
 | index | event |
 | --- | --- |
-| 21 | Approval(owner: 0x1dF462e2712496373A347f8ad10802a5E95f053D, spender: 0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA, value: 1 [1000000000000000000, 18 decimals]) |
-| 23 | Transfer(from: 0x1dF462e2712496373A347f8ad10802a5E95f053D, to: 0x49411839511dcB473e9eCd5471B7add47EA1082e, value: 1 [1000000000000000000, 18 decimals]) |
+| 20 | Approval(owner: 0x1dF462e2712496373A347f8ad10802a5E95f053D, spender: 0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA, value: 1 [1000000000000000000, 18 decimals]) |
+| 22 | Transfer(from: 0x1dF462e2712496373A347f8ad10802a5E95f053D, to: 0x49411839511dcB473e9eCd5471B7add47EA1082e, value: 1 [1000000000000000000, 18 decimals]) |
 
 #### 0x1dF462e2712496373A347f8ad10802a5E95f053D (AaveV3InkWhitelabel.ACL_ADMIN, GovernanceV3InkWhitelabel.PERMISSIONED_PAYLOADS_CONTROLLER_EXECUTOR)
 
 | index | event |
 | --- | --- |
-| 27 | ExecutedAction(target: 0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f, value: 0, signature: execute(), data: 0x, executionTime: 1788998826, withDelegatecall: true, resultData: 0x) |
+| 26 | ExecutedAction(target: 0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f, value: 0, signature: execute(), data: 0x, executionTime: 1788998826, withDelegatecall: true, resultData: 0x) |
 
 #### 0x1dE9CB9420Dd1f2cCeFFf9393E126b800D413b7A (GovernanceV3InkWhitelabel.PERMISSIONED_PAYLOADS_CONTROLLER)
 
 | index | event |
 | --- | --- |
-| 28 | PayloadExecuted(payloadId: 32) |
+| 27 | PayloadExecuted(payloadId: 32) |
 
 ## Raw storage changes
 
@@ -173,7 +172,7 @@
 | 0x1e4061ed12ce1f4439fe6c7922bd1dce45af754358ce2f94214f93749947e40c | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x0000000000000000000000000000000000000000000000000000000000000008 |
 | 0x50039cf134a124858bd88bbc9225ec3c537b89a0e9237ce39fe1813e6edf8259 | 0x000000000000000000000000000000000000000000000000000000000000000c | 0x0000000000000000000000000000000000000000000000000000000000000004 |
 | 0x67dcc86da9aaaf40a183002157e56801115aa6057705e43279b4c1c90942d6b4 | 0x000000000000000000000000000006000000000000000000000000000000002c | 0x0000000000000000000000000000060000000000000000000000000000000024 |
-| 0x7c37dcd67f608afd5ac59612428d1e189d2ec5de8ea5d079d353a6bd9af97452 | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x100000000000000000000003e800001dc9000000000107d081122af819640000 |
+| 0x7c37dcd67f608afd5ac59612428d1e189d2ec5de8ea5d079d353a6bd9af97452 | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x100000000000000000000003e800001dc9000000000107d08112000000000000 |
 | 0x7c37dcd67f608afd5ac59612428d1e189d2ec5de8ea5d079d353a6bd9af97453 | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x0000000000000000000000000000000000000000033b2e3c9fd0803ce8000000 |
 | 0x7c37dcd67f608afd5ac59612428d1e189d2ec5de8ea5d079d353a6bd9af97454 | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x0000000000000000000000000000000000000000033b2e3c9fd0803ce8000000 |
 | 0x7c37dcd67f608afd5ac59612428d1e189d2ec5de8ea5d079d353a6bd9af97455 | 0x0000000000000000000000000000000000000000000000000000000000000000 | 0x000000000000000000000d006aa1f4aa00000000000000000000000000000000 |
@@ -267,9 +266,9 @@
         "isFlashloanable": true,
         "isFrozen": false,
         "isPaused": false,
-        "liquidationBonus": 11000,
+        "liquidationBonus": 0,
         "liquidationProtocolFee": 1000,
-        "liquidationThreshold": 6500,
+        "liquidationThreshold": 0,
         "ltv": 0,
         "oracle": "0xB42BA1d34BbF88731aA456Ec87D039b54B818972",
         "oracleDecimals": 8,
@@ -279,7 +278,7 @@
         "supplyCap": 122000,
         "symbol": "kHYPE",
         "underlying": "0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929",
-        "usageAsCollateralEnabled": true,
+        "usageAsCollateralEnabled": false,
         "variableDebtToken": "0x335c7Ea0b40b14E6dD31fb52532D2db70cf77878",
         "variableDebtTokenName": "Aave InkWhitelabel Variable Debt kHYPE",
         "variableDebtTokenSymbol": "variableDebtInkWlkHYPE",
