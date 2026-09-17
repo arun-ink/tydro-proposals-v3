@@ -52,6 +52,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
 
     return listings;
   }
+
   function _supplyAndConfigureLMAdmin(address asset, uint256 seedAmount, address lmAdmin) internal {
     IERC20(asset).forceApprove(address(AaveV3InkWhitelabel.POOL), seedAmount);
     AaveV3InkWhitelabel.POOL.supply(asset, seedAmount, address(AaveV3InkWhitelabel.DUST_BIN), 0);
@@ -64,24 +65,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
       IEmissionManager(AaveV3InkWhitelabel.EMISSION_MANAGER).setEmissionAdmin(vToken, lmAdmin);
     }
   }
-  function borrowsUpdates()
-    public
-    pure
-    override
-    returns (IAaveV3ConfigEngine.BorrowUpdate[] memory)
-  {
-    IAaveV3ConfigEngine.BorrowUpdate[]
-      memory borrowUpdates = new IAaveV3ConfigEngine.BorrowUpdate[](1);
 
-    borrowUpdates[0] = IAaveV3ConfigEngine.BorrowUpdate({
-      asset: AaveV3InkWhitelabelAssets.USDG_UNDERLYING,
-      enabledToBorrow: EngineFlags.DISABLED,
-      flashloanable: EngineFlags.KEEP_CURRENT,
-      reserveFactor: EngineFlags.KEEP_CURRENT
-    });
-
-    return borrowUpdates;
-  }
   function assetsEModeUpdates()
     public
     pure
@@ -115,6 +99,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
 
     return assetEModeUpdates;
   }
+
   function eModeCategoryCreations()
     public
     pure
