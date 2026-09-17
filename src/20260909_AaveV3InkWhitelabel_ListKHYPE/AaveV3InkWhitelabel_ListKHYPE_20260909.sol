@@ -39,7 +39,7 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
       liqThreshold: 65_00,
       liqBonus: 10_00,
       reserveFactor: 20_00,
-      supplyCap: 5_000,
+      supplyCap: 122_000,
       borrowCap: 1,
       liqProtocolFee: 10_00,
       rateStrategyParams: IAaveV3ConfigEngine.InterestRateInputData({
@@ -116,8 +116,8 @@ contract AaveV3InkWhitelabel_ListKHYPE_20260909 is AaveV3PayloadInkWhitelabel {
     borrowableAssets_KHYPE__USDG[0] = AaveV3InkWhitelabelAssets.USDG_UNDERLYING;
 
     eModeCreations[0] = IAaveV3ConfigEngine.EModeCategoryCreation({
-      ltv: 60_00,
-      liqThreshold: 65_00,
+      ltv: 65_00,
+      liqThreshold: 72_00,
       liqBonus: 10_00,
       label: 'kHYPE__USDG',
       isolated: true,
